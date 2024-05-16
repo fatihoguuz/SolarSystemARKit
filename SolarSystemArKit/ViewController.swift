@@ -15,20 +15,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+       //let myBox = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
+        let world = createSephere(radius: 0.3, content: "world.jpg", vector: SCNVector3(x: 0, y: 0, z: -1))
+        sceneView.scene.rootNode.addChildNode(world)
+        let mars = createSephere(radius: 0.2, content: "mars.jpg", vector: SCNVector3(x: 2, y: 0, z: 0))
+        sceneView.scene.rootNode.addChildNode(mars)
+        let moon = createSephere(radius: 0.1, content: "moon.jpg", vector: SCNVector3(x: -1, y: 0, z: 0))
+        sceneView.scene.rootNode.addChildNode(moon)
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
-        // Set the scene to the view
-        sceneView.scene = scene
+        
+        sceneView.automaticallyUpdatesLighting = true
+        
     }
-    
+    func createSephere(radius: CGFloat, content:String, vector: SCNVector3) -> SCNNode{
+        let mySphere = SCNSphere(radius: radius)
+        let boxMaterial = SCNMaterial()
+        boxMaterial.diffuse.contents = UIImage(named: "art.scnassets/\(content)")
+        mySphere.materials = [boxMaterial]
+        let node = SCNNode()
+        node.position = vector
+        node.geometry = mySphere
+        sceneView.scene.rootNode.addChildNode(node)
+        return node
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -45,18 +57,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Pause the view's session
         sceneView.session.pause()
     }
-
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
